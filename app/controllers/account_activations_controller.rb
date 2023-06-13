@@ -9,8 +9,7 @@ class AccountActivationsController < ApplicationController
       end
   end
 
-  
-  def edit
+    def edit
       user = current_user
   
       if user && !user.activated? 

@@ -59,11 +59,13 @@ class SearchesController < ApplicationController
     {
       id: publish.user.id,
       name: publish.user.first_name,
+
       reach_time: reach_time,
       image_url: publish.user.image.attached? ? rails_blob_url(publish.user.image) : nil,
       average_rating: publish.user.average_rating,
       about_ride: publish.about_ride,
       publish: publish
+     
       
     }
   end

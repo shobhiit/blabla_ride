@@ -6,11 +6,15 @@ module ApplicationCable
       self.current_user = find_verified_user
     end
 
-    protected
+    private
 
     def find_verified_user
-      if (current_user = "shobhiitiantttt@gmail.com")
-        current_user
+      client_id = request.params[:client]
+
+      # Modify this code block based on your authentication logic
+      verified_user = User.find_by(email: client_id)
+      if verified_user
+        verified_user
       else
         reject_unauthorized_connection
       end

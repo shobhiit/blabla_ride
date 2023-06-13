@@ -13,14 +13,15 @@ Rails.application.routes.draw do
   post '/verify_otp', to: 'password_reset#verify_otp'
   post '/password_reset', to: 'password_reset#reset_password' 
 
+  #notifications
+  post '/send_notification', to: 'push_notifications#send_notification'
 
-  
 
   #messages routes
-  mount ActionCable.server => '/cable'
+  resources :chats, only: [:index, :show, :create, :update, :destroy] do
+    resources :messages, only: [:index, :show, :create, :update, :destroy]
+  end
   
-
-  resources :messages, only: [:create]
 
 
 
@@ -29,8 +30,11 @@ Rails.application.routes.draw do
 
   #vehicle routes
   resources :vehicles
+  get '/show_by_id/:id', to: 'vehicles#show_by_id'
+
+
   
-  get '/vehicle_brands', to: 'vehicles#vehicle_brands'
+  
 
   #users routes
   devise_scope :user do

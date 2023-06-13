@@ -77,21 +77,16 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
 
-  def find_user_by_id
-    user = User.find(params[:id])
 
-    if user
-      render json: { user: user }, status: :ok
-    else
-      render json: { error: 'User not found' }, status: :not_found
-    end
-  end
 
  
 
   
   
   private
+  
+
+  
   # Strong parameters for user sign up
   def sign_up_params
     params.require(:user).permit(:email, :first_name, :last_name, :dob, :title, :password, :phone_number,:bio, :postal_address, :title,  :travel_preferences,)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_05_082547) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_13_061017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,6 +47,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_082547) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "chats", force: :cascade do |t|
+    t.integer "sender_id"
+    t.integer "receiver_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "publish_id"
+  end
+
   create_table "device_infos", force: :cascade do |t|
     t.string "token"
     t.string "device_type"
@@ -62,6 +70,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_082547) do
     t.bigint "receiver_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "chat_id"
+    t.index ["chat_id"], name: "index_messages_on_chat_id"
     t.index ["receiver_id"], name: "index_messages_on_receiver_id"
     t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
@@ -235,6 +245,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_082547) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "device_infos", "users"
+  add_foreign_key "messages", "chats"
   add_foreign_key "messages", "users", column: "receiver_id"
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "passengers", "publishes", on_delete: :cascade

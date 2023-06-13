@@ -34,6 +34,11 @@ class VehiclesController < ApplicationController
   end
   
 
+  def show_by_id
+    @vehicle = Vehicle.find(params[:id])
+    render json: @vehicle
+  end
+
   # GET /vehicles/1
   def show
     render json: @vehicle

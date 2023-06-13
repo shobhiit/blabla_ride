@@ -5,6 +5,8 @@ ruby "3.2.1"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.4", ">= 7.0.4.3"
+gem 'whenever', require: false
+gem 'dotenv-rails', groups: [:development, :test]
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
@@ -24,9 +26,9 @@ gem 'devise-jwt'
 gem 'mailtrap'
 gem 'activestorage'
 
-
+gem 'fcm'
 gem 'rpush'
-
+gem 'rake' # Add this line
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -56,7 +58,7 @@ group :development do
   # gem "spring"
 end
 
-gem 'whenever', require: false
+
 
 gem "geocoder"
 gem 'google_maps_service'

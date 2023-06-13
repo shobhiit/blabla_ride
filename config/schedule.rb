@@ -22,12 +22,31 @@
 # every 1.day, at: '03:41pm' do
 #   rake 'publish:complete_publish', environment: 'production'
 # end
-
-require File.expand_path('../config/environment', __dir__)
-
+#set :output, "#{Rails.root}/log/cron.log"
 
 
-every 1.day, at: '04:25pm' do
-  rake 'publish:complete_publish', environment: Rails.env
+
+
+# every 1.day, at: '12:00 pm' do
+#   rake "publish:complete_publish"
+# end
+
+
+# # schedule.rb
+
+# # Use the 'every' method to define a cron job
+# every 1.day, at: '12:40pm' do
+#   runner "puts 'Hello'"
+# end
+#require File.expand_path("config/environment", __dir__)
+require "rails"
+require "whenever"
+
+
+every 1.day, at: '12:00 pm' do
+  rake "publish:complete_publish", output: { standard: "#{Rails.root}/log/cron_publish.log" }, environment: 'development'
 end
 
+every 1.day, at: '14:33 pm' do
+  runner "puts 'Hello'", output: { standard: "#{Rails.root}/log/cron_hello.log" }, environment: 'development'
+end

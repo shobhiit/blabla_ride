@@ -1,65 +1,73 @@
 class PassengersController < ApplicationController
   before_action :authenticate_user!
-
-
 #to show all booked rides from current user
-  # def booked_publishes
-  #   booked_passengers = Passenger.where(user_id: current_user.id)
-  #   rides = booked_passengers.map { |passenger| passenger.publish }
-
-  #   render json: { code: 200, rides: rides }, status: :ok
-  # end
   def booked_publishes
     booked_passengers = Passenger.where(user_id: current_user.id)
     rides = booked_passengers.map do |passenger|
+      publish = passenger.publish
+
+      time = extract_time(publish.time)
+      estimate_time = extract_time(publish.estimate_time)
+      reach_time = calculate_reach_time(publish.date, time, estimate_time)
+
       {
-        ride: passenger.publish,
+        ride: publish,
         booking_id: passenger.id,
         seat: passenger.seats,
         status: passenger.status,
-       
+        reach_time: reach_time
       }
     end
-  
+
     render json: { code: 200, rides: rides }, status: :ok
   end
-  
 
   def book_publish
     publish = Publish.find_by(id: params[:passenger][:publish_id])
-
+  
     if publish
       if publish.user_id == current_user.id
-        render json: {code: 422, error: "You cannot book your own published ride" }, status: :unprocessable_entity
+        render json: { code: 422, error: "You cannot book your own published ride" }, status: :unprocessable_entity
         return
       end
-
+  
       if publish.passengers_count > 0
         seats = params[:passenger][:seats].to_i
-
+  
         if publish.passengers_count >= seats
-          @passenger = Passenger.new(book_params)
-          @passenger.price = publish.set_price * seats
-          @passenger.status = "confirm booking"
-
-          if @passenger.save
+          # Check if the user has previously booked the ride
+          passenger = Passenger.find_by(publish_id: publish.id, user_id: current_user.id)
+  
+          if passenger && passenger.status == "cancel booking"
+            # Update the existing passenger record
+            passenger.update(status: "confirm booking", seats: seats, price: publish.set_price * seats)
             publish.update(passengers_count: publish.passengers_count - seats)
-            render json: { code: 201, passenger: @passenger }, status: :created
+  
+            render json: { code: 200, passenger: passenger }, status: :ok
           else
-            error_message = @passenger.errors.full_messages.first
-            
-            render json: { code: 422, error: error_message }, status: :unprocessable_entity
+            @passenger = Passenger.new(book_params)
+            @passenger.price = publish.set_price * seats
+            @passenger.status = "confirm booking"
+  
+            if @passenger.save
+              publish.update(passengers_count: publish.passengers_count - seats)
+              render json: { code: 201, passenger: @passenger }, status: :created
+            else
+              error_message = @passenger.errors.full_messages.first
+              render json: { code: 422, error: error_message }, status: :unprocessable_entity
+            end
           end
         else
           render json: { code: 422, error: "Insufficient seats available" }, status: :unprocessable_entity
         end
       else
-        render json: { code:422, error: "No seats available for this ride" }, status: :unprocessable_entity
+        render json: { code: 422, error: "No seats available for this ride" }, status: :unprocessable_entity
       end
     else
-      render json: { code:422, error: "Invalid publish" }, status: :unprocessable_entity
+      render json: { code: 422, error: "Invalid publish" }, status: :unprocessable_entity
     end
   end
+  
 
   def cancel_booking
     @passenger = Passenger.find_by(id: params[:id])
@@ -96,6 +104,28 @@ class PassengersController < ApplicationController
   end
 
   private
+  def extract_time(datetime)
+    datetime&.strftime("%H:%M:%S")
+  end
+    
+  def calculate_reach_time(date, time, estimate_time)
+    return unless date && time && estimate_time
+
+    datetime = DateTime.parse("#{date} #{time}")
+    estimate_duration = parse_duration(estimate_time)
+
+    reach_datetime = datetime + estimate_duration
+    reach_datetime.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+  end
+  def parse_duration(duration_str)
+    parts = duration_str.scan(/\d+/).map(&:to_i)
+    seconds = parts.pop
+    minutes = parts.pop || 0
+    hours = parts.pop || 0
+  
+    hours.hours + minutes.minutes + seconds.seconds
+  end
+  
 
   def book_params
     params.require(:passenger).permit(:publish_id, :seats).merge(user_id: current_user.id)

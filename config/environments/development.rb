@@ -57,17 +57,17 @@ Rails.application.configure do
 
   #config.action_controller.default_url_options = { host: 'imaginative-concha-5b2766.netlify.app', protocol: 'https' }
 
-  config.action_mailer.default_url_options = { host: 'https://0e25-112-196-113-2.ngrok-free.app' }
+  config.action_mailer.default_url_options = { host: 'https://53d0-112-196-113-2.ngrok-free.app' }
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
-  config.hosts << "0e25-112-196-113-2.ngrok-free.app"
+  config.hosts << "53d0-112-196-113-2.ngrok-free.app"
     #config.hosts << ENV['HOSTS']
   #for real time messaging
-  config.action_cable.url = 'wss://0e25-112-196-113-2.ngrok-free.app'
+  config.action_cable.url = 'wss://53d0-112-196-113-2.ngrok-free.app'
   #config.action_cable.url = 'ws://localhost:3000/cable'
 
 
-  config.action_cable.allowed_request_origins = ['https://0e25-112-196-113-2.ngrok-free.app']
+  config.action_cable.allowed_request_origins = ['https://53d0-112-196-113-2.ngrok-free.app']
 
 
  
@@ -85,7 +85,7 @@ Rails.application.configure do
     config.action_mailer.smtp_settings = {
       address:              'smtp.gmail.com',
       port:                 587,
-      domain:               '8697-112-196-113-2.ngrok-free.app',
+      domain:               '53d0-112-196-113-2.ngrok-free.app',
       user_name:            'harpreetvallah2@gmail.com',
       password:             'fvjfwycrflgltfgz',
       authentication:       'plain',

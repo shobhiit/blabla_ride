@@ -11,7 +11,7 @@ class Users::SessionsController < Devise::SessionsController
     user = User.find(params[:id])
 
     if user
-      render json: {code: 200, user: user }, status: :ok
+      render json: { code: 200, user: user,  image_url: user.image.attached? ? url_for(user.image) : nil }, status: :ok
     else
       render json: {code: 404, error: 'User not found' }, status: :not_found
     end
@@ -21,18 +21,23 @@ class Users::SessionsController < Devise::SessionsController
 
   
   
-  def respond_with(resource, options={})
+  def respond_with(resource, options = {})
     if current_user.nil?
-      render json:{
+      render json: {
         status: { code: 400, error: resource.errors.full_messages.join(", ") }
       }, status: :bad_request
     else
+      # Create Rpush Android app
+      # android_app_command = "bundle exec rake rpush:android_app[#{app_params[:name]},#{app_params[:connections]},#{app_params[:environment]},#{app_params[:auth_key]}]"
+      # system(android_app_command)
+  
       render json: {
         status: { code: 200, message: 'User Signed in successfully', data: current_user, image_url: current_user.image.attached? ? url_for(current_user.image) : nil }
       }, status: :ok
-      end
+    end
   end
-
+  
+  
 
  
 
@@ -53,8 +58,11 @@ class Users::SessionsController < Devise::SessionsController
     end
   end
 end
+private
 
-
+def app_params
+  params.require(:app_params).permit(:name, :connections, :environment, :auth_key)
+end
 
 
 

@@ -1,13 +1,32 @@
 namespace :rpush do
-    desc "Create Rpush android app"
-    task android_app: [:environment] do
-      Rpush::Gcm::App.create(name: "android_app1", connections: 2, environment: Rails.env, type: "Rpush::Client::ActiveRecord::Gcm::App", auth_key: 'AAAA4Rc0jBM:APA91bEChNc5KYTHEDQVFgchtuHqV9QZhFfU7JmtQK-hjHTYqQ460srFncoC04bmZaXVSm70aFKtmPA4XjEOQwJZPf1Ytoko3LH8OF1ShSKz-s0vcveY4-T-cfaz7Q8Tfr-N4k9OI8Cd')
-      puts "Rpush Android app created Successfully"
-    end
-  
-    desc "Create Rpush Ios app"
-    task ios_app: [:environment] do
-      Rpush::Gcm::App.create(name: "ios_app", connections: 1, environment: Rails.env, type: "Rpush::Client::ActiveRecord::Gcm::App", auth_key: 'AAAA4Rc0jBM:APA91bEChNc5KYTHEDQVFgchtuHqV9QZhFfU7JmtQK-hjHTYqQ460srFncoC04bmZaXVSm70aFKtmPA4XjEOQwJZPf1Ytoko3LH8OF1ShSKz-s0vcveY4-T-cfaz7Q8Tfr-N4k9OI8Cd', certificate: File.read("config/file_name.p8"))
-      puts "Rpush IOS app created Successfully"
+  desc "Create Rpush Android app"
+  task :android_app, [:name, :connections, :environment, :auth_key] => [:environment] do |_, args|
+    # Set default values if not provided
+    args.with_defaults(connections: 1, environment: "production")
+
+    success = Rpush::Gcm::App.create(
+      name: args.name,
+      connections: args.connections.to_i,
+      environment: args.environment,
+      type: "Rpush::Client::ActiveRecord::Gcm::App",
+      auth_key: args.auth_key
+    )
+
+    if success
+      puts "Rpush Android app created successfully"
+    else
+      puts "Failed to create Rpush Android app"
     end
   end
+
+
+  # desc "Create Rpush iOS app"
+  # task :ios_app, [:name, :connections, :environment, :auth_key, :certificate] => [:environment] do |_, args|
+  #   success = Rpush::Apn::App.create(name: args.name, connections: args.connections.to_i, environment: args.environment, type: "Rpush::Client::ActiveRecord::Apn::App", auth_key: args.auth_key, certificate: args.certificate)
+  #   if success
+  #     puts "Rpush iOS app created successfully"
+  #   else
+  #     puts "Failed to create Rpush iOS app"
+  #   end
+  # end
+end

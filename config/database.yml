@@ -82,5 +82,5 @@ test:
 production:
   <<: *default
   database: ride_share_app_production
-  username: ride_share_app
-  password: <%= ENV["AUTH_API_DATABASE_PASSWORD"] %>
+  #username: postgres
+  #password: <%= ENV["AUTH_API_DATABASE_PASSWORD"] %>

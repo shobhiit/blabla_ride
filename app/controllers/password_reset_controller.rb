@@ -1,5 +1,4 @@
 class PasswordResetController < ApplicationController
-    #skip_before_action :verify_authenticity_token
     before_action :verify_sign_in , only: [:send_otp, :verify_otp, :reset_password]
   
       def send_otp
