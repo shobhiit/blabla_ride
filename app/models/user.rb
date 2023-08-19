@@ -2,6 +2,8 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
   require 'two_factor'
   has_many :vehicles
+  has_many :sender_chats, class_name: 'Chat', foreign_key: 'sender_id'
+  has_many :receiver_chats, class_name: 'Chat', foreign_key: 'receiver_id'
   #has_many :device_infos  
   has_many :publishes
   devise :database_authenticatable, :registerable,
@@ -16,8 +18,7 @@ class User < ApplicationRecord
         #custom validation on image
         validate :image_format
         #for chatting
-        has_many :sent_messages, class_name: 'Message', foreign_key: 'sender_id'
-        has_many :received_messages, class_name: 'Message', foreign_key: 'receiver_id'
+        has_many :messages
         #for ratting 
         has_many :given_ratings, class_name: 'Rating', foreign_key: 'rating_user_id'
         has_many :received_ratings, class_name: 'Rating', foreign_key: 'rated_user_id'
@@ -37,16 +38,17 @@ class User < ApplicationRecord
         before_create :create_activation_digest
 
 
-        def image_url
-          # Assuming you have an `image` attribute that stores the image file name
-          if image.attached?
-            Rails.application.routes.url_helpers.url_for(image)
-          else
-            # Return a default image URL or handle the case when no image is attached
-            # For example:
-            ActionController::Base.helpers.asset_path('default-avatar.png')
-          end
-        end         
+      def image_url
+        # Assuming you have an `image` attribute that stores the image file name
+        if image.attached?
+          Rails.application.routes.url_helpers.url_for(image)
+        else
+          # Return a default image URL or handle the case when no image is attached
+          # For example:
+          #ActionController::Base.helpers.asset_path('default-avatar.png')
+          nil
+        end
+      end         
 
       #notifications
       def send_notification_to_user(title, description)

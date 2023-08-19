@@ -5,13 +5,16 @@ class PublishesController < ApplicationController
   
   # GET /publishes
   def index
-    @publishes = Publish.all.where(user_id: current_user.id)
+    @publishes = Publish.all.where(user_id: current_user.id).order(date: :asc, time: :asc)
     render json: { code: 200, data: @publishes }
   end
   
-#Get publish by id
+  
+  
+  #Get publish by id
   def show
-    @rides = Passenger.where(publish_id: @publish.id)
+    @rides = Passenger.where(publish_id: @publish.id).where.not(status: "cancel booking")
+    # @rides = Passenger.where(publish_id: @publish.id)
     @user = User.find_by(id: @publish.user_id)
     @vehicle = Vehicle.find_by(id: @publish.vehicle_id)
     @passengers = Passenger.find_by(id: @publish.id)
@@ -72,13 +75,13 @@ class PublishesController < ApplicationController
 
   # PATCH/PUT /publishes/1
   def update
-    
     if @publish.update(publish_params)
-      render json: @publish
+      render json: { code: 200, publish: @publish }
     else
-      render json: @publish.errors, status: :unprocessable_entity
+      render json: { code: 422, error: @publish.errors.full_messages, status: :unprocessable_entity }, status: 422
     end
   end
+  
 
  
   # DELETE /publishes/1
@@ -89,16 +92,24 @@ class PublishesController < ApplicationController
 
 
   def cancel_publish
-    @publish = Publish.find(params[:id])
+    @publish = Publish.find_by(id: params[:id]) 
   
-    if @publish.update(status: "cancelled")
+    if @publish.nil?
+      render json: { code: 404, message: "Publish not found" }, status: :not_found
+    elsif @publish.user_id == current_user.id
+      @publish.update(status: "cancelled")
+      @passengers = Passenger.where(publish_id: @publish.id)
+  
+      @passengers.each do |passenger|
+        passenger.update(status: "cancelled_by_driver")
+      end
+  
       render json: { code: 200, message: "Publish successfully cancelled." }
     else
-      render json: @publish.errors, status: :unprocessable_entity
+      render json: { code: 403, message: "Permission denied" }, status: :forbidden
     end
   end
-
-
+  
 
   # POST /publishes/:id/complete_publish
   def complete_publish
@@ -151,5 +162,5 @@ class PublishesController < ApplicationController
     params.require(:publish).permit(:source, :destination, :source_longitude, :source_latitude, :destination_longitude, :destination_latitude, :passengers_count, :add_city, :add_city_longitude, :add_city_latitude, :date, :time, :set_price, :about_ride, :vehicle_id, :book_instantly, :mid_seat, :estimate_time, select_route: {})
     
   end
-  
+
 end

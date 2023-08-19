@@ -5,8 +5,8 @@ ruby "3.2.1"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.4", ">= 7.0.4.3"
-gem 'whenever', require: false
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'sidekiq', '<= 7.1.1'
+gem 'sidekiq-cron'
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
@@ -26,9 +26,6 @@ gem 'devise-jwt'
 gem 'mailtrap'
 gem 'activestorage'
 
-gem 'fcm'
-gem 'rpush'
-gem 'rake' # Add this line
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -67,7 +64,7 @@ gem "rgeo"
 gem 'httparty'
 
 gem 'zeitwerk'
-gem 'actioncable'
+
 gem 'devise-two-factor'
 gem 'redis'
-
+gem 'dotenv'

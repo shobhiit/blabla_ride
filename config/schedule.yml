@@ -39,14 +39,13 @@
 #   runner "puts 'Hello'"
 # end
 #require File.expand_path("config/environment", __dir__)
-require "rails"
-require "whenever"
+# require "rails"
+# require "whenever"
 
 
-every 1.day, at: '12:00 pm' do
-  rake "publish:complete_publish", output: { standard: "#{Rails.root}/log/cron_publish.log" }, environment: 'development'
-end
 
-every 1.day, at: '14:33 pm' do
-  runner "puts 'Hello'", output: { standard: "#{Rails.root}/log/cron_hello.log" }, environment: 'development'
-end
+
+my_first_job:
+  #cron: "*/1 * * * *" #it will retrieve data every 1 minute
+  cron: "0 9 * * *"
+  class: "CompleteRideJob"

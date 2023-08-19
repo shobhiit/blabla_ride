@@ -33,7 +33,7 @@ module AuthApi
     #config.autoload_paths += %W(#{config.root}/lib)
 
     # config.time_zone = "Central Time (US & Canada)"
-    #config.time_zone = 'Asia/Kolkata'
+    # config.time_zone = 'Asia/Kolkata'
 
     # config.eager_load_paths << Rails.root.join("extras")
     config.filter_parameters += [:password, :password_confirmation]

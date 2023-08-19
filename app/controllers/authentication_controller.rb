@@ -9,21 +9,8 @@ class AuthenticationController < ApplicationController
           render(json:{
             status: {code: 401, error: 'failed to send passcode'}}, status: :unauthorized)
         end
-      end
+    end
 
-    # def phone
-    #   phone_number = params[:phone_number]
-    
-    #   if send_passcode(phone_number)
-    #     render(json: {
-    #       status: { code: 200, message: 'Sent passcode' }
-    #     }, status: :ok)
-    #   else
-    #     render(json: {
-    #       status: { code: 401, error: 'Failed to send passcode' }
-    #     }, status: :unauthorized)
-    #   end
-    # end
     
       def verify
         @user = User.find_by_phone_number(params[:phone_number])
@@ -39,23 +26,6 @@ class AuthenticationController < ApplicationController
           }, status: :unauthorized)
         end
       end   
-
-
-      # def verify
-      #   phone_number = params[:phone_number]
-      #   otp = params[:otp]
-    
-      #   if verify_passcode(phone_number, otp)
-      #     render(json: {
-      #       status: { code: 200, message: 'OTP verification successful' }
-      #     }, status: :ok)
-      #   else
-      #     render(json: {
-      #       status: { code: 401, error: 'OTP verification failed' }
-      #     }, status: :unauthorized)
-      #   end
-      # end
-    
      
 end
 

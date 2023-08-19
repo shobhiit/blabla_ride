@@ -8,8 +8,10 @@
     <h1>Hi <%= @user.first_name %>,</h1>
 
     <p>Welcome to our application! Please click on the following link to activate your account:</p>
+    <br>
 
-    <p><%= link_to "Activate my account", edit_account_activation_url(@user.activate_token, host: "b16b-112-196-113-2.ngrok-free.app") %></p>
+    <p><%= link_to "Click here to activate your account", edit_account_activation_url(@user.activate_token, host: "192.180.2.134:3001"), style: "color: blue;" %></p>
+
 
 
 

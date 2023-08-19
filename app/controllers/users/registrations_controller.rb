@@ -10,8 +10,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-
-  
   def respond_with(resource, options={})
     if resource.persisted?
       render json: {
@@ -24,9 +22,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
       }, status: :unprocessable_entity
     end
   end
-
-
-
 
   def update
     user = current_user
@@ -50,9 +45,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   rescue ActiveRecord::RecordNotFound => error
     render json: { error: error.message }, status: :unauthorized
   end
-  
-
-
 
   # Delete user account
   def destroy
@@ -63,8 +55,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render json: { error: error.message }, status: :unauthorized
   end
 
-
-  
   # Show user information
   def show
     if current_user.present?
@@ -76,20 +66,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-
-
-
- 
-
-  
-  
   private
-  
-
-  
   # Strong parameters for user sign up
   def sign_up_params
-    params.require(:user).permit(:email, :first_name, :last_name, :dob, :title, :password, :phone_number,:bio, :postal_address, :title,  :travel_preferences,)
+    params.require(:user).permit(:email, :first_name, :last_name, :dob, :title, :password, :phone_number,:bio, :postal_address, :title,  :travel_preferences)
   end
   # Strong parameters for user update
   def user_params

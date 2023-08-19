@@ -2,31 +2,6 @@
 class VehiclesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_vehicle, only: [:show, :update, :destroy]
-
-
-
-
-  # GET /vehicle_brands
-#  def vehicle_brands
-#     url = URI("https://car-data.p.rapidapi.com/cars?limit=45&page=0")
-#     http = Net::HTTP.new(url.host, url.port)
-#     http.use_ssl = true
-
-#     request = Net::HTTP::Get.new(url)
-#     request["X-RapidAPI-Key"] = 'c329fedeacmshf864b6a599740ddp1aa549jsn421fc2a5aabb'
-#     request["X-RapidAPI-Host"] = 'car-data.p.rapidapi.com'
-
-#     response = http.request(request)
-
-#     if response.code == '200'
-#       data = JSON.parse(response.body)
-#       render json: data
-#     else
-#       render json: { error: "Request failed with response code: #{response.code}" }, status: :unprocessable_entity
-#     end
-#   end
-
-
   # GET /vehicles
   def index
     @vehicles = current_user.vehicles.all

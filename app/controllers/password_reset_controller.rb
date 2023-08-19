@@ -58,5 +58,5 @@ class PasswordResetController < ApplicationController
     def generate_otp
       SecureRandom.random_number(1000..9999)
     end  
-    end
+end
     

@@ -5,11 +5,11 @@ class MessagesController < ApplicationController
   before_action :set_message, only: [:show, :update, :destroy]
 
   def index
-    sent_messages = @chat.messages.where(sender_id: current_user.id)
-    received_messages = @chat.messages.where(receiver_id: current_user.id)
+    messages = @chat.messages.order(created_at: :desc)
   
-    render json: { code: 200, sent_messages: sent_messages, received_messages: received_messages }, status: :ok
+    render json: { code: 200, messages: messages }
   end
+  
   
 
   def show

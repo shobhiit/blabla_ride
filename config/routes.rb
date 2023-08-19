@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  get 'device_infos/create'
 
   #authentication routes
   devise_for :users, controllers: {
@@ -13,16 +12,14 @@ Rails.application.routes.draw do
   post '/verify_otp', to: 'password_reset#verify_otp'
   post '/password_reset', to: 'password_reset#reset_password' 
 
-  #notifications
-  post '/send_notification', to: 'push_notifications#send_notification'
 
+  get 'chats/:chat_id', to: 'chats#get_chat'
 
   #messages routes
   resources :chats, only: [:index, :show, :create, :update, :destroy] do
     resources :messages, only: [:index, :show, :create, :update, :destroy]
   end
   
-
 
 
   
@@ -53,7 +50,7 @@ Rails.application.routes.draw do
   get '/user_images', to: 'user_images#show'
   
 
-  #publish a ride routes
+  #publish a ride routesF
   resources :publishes do
     resources :passengers, only: [:create, :destroy]
   end
@@ -74,7 +71,9 @@ Rails.application.routes.draw do
  
 
   #email activation route
-  resources :account_activations, only: [:edit,:create]
+  post '/account_activations', to: 'account_activations#create'
+  get '/account_activations/:activate_token/edit', to: 'account_activations#edit', as: 'edit_account_activation'
+
 
 
   post '/book_publish', to: 'passengers#book_publish'
