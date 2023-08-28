@@ -56,6 +56,11 @@ class PublishesController < ApplicationController
   
 
   def create
+    # Check if the user's phone_verified is true
+    unless current_user.phone_verified
+      render json: { code: 403, message: "Phone not verified. Cannot publish ride." }, status: :forbidden
+      return
+    end
     @publish = current_user.publishes.new(publish_params)
   
     @publish.status = "pending" # Set initial status to "pending"

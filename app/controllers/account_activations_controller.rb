@@ -8,7 +8,7 @@ class AccountActivationsController < ApplicationController
         status: {code: 200, message: "Activation email sent. Please check your email."}}, status: :ok)
     else
       render(json:{
-        status: {code: 403, error: 'failed to send passcode'}}, status: :forbidden)
+        status: {code: 403, error: 'failed to send activation email'}}, status: :forbidden)
     end
   end
   def edit
@@ -16,7 +16,6 @@ class AccountActivationsController < ApplicationController
     
     if user && !user.activated? && user.activate
 
-      
       render(json:{
         status: {code: 200, message: "Account activated!"}}, status: :ok)
     else

@@ -3,7 +3,7 @@ require 'httparty'
 class TwoFactor
   include HTTParty
 
-  TWO_FACTOR_API_KEY = '3a68b40f-35e1-11ee-addf-0200cd936042'
+  TWO_FACTOR_API_KEY = '60f7a670-40b5-11ee-addf-0200cd936042'
 
   def self.send_passcode(phone_number)
     response = get("https://2factor.in/API/V1/#{TWO_FACTOR_API_KEY}/SMS/#{phone_number}/AUTOGEN3")

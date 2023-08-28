@@ -18,7 +18,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       }, status: :ok
     else
       render json: {
-       staus: { code: 422, error: resource.errors.full_messages.first}
+       status: { code: 422, error: resource.errors.full_messages.first}
       }, status: :unprocessable_entity
     end
   end
@@ -49,8 +49,14 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # Delete user account
   def destroy
     user = current_user
-    user.destroy
-    render json: { status: { code: 200, message: 'User deleted successfully' } }
+    # Check if the user has active rides in the publish or passengers tables
+    if Publish.exists?(user_id: user.id) || Passenger.exists?(user_id: user.id)
+      render json:{
+        status: {code: 422, error: "Cannot delete account. Please cancel all rides first."}}, status: :unprocessable_entity
+    else
+      user.destroy
+      render json: { status: { code: 200, message: 'User deleted successfully' } }
+    end
   rescue ActiveRecord::RecordNotFound => error
     render json: { error: error.message }, status: :unauthorized
   end

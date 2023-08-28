@@ -9,8 +9,6 @@ class MessagesController < ApplicationController
   
     render json: { code: 200, messages: messages }
   end
-  
-  
 
   def show
     render json: { code: 200, message: @message }, status: :ok

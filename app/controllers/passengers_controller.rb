@@ -24,53 +24,13 @@ class PassengersController < ApplicationController
     render json: { code: 200, rides: rides }, status: :ok
   end
 
-  # def book_publish
-  #   publish = Publish.find_by(id: params[:passenger][:publish_id])
-  
-  #   if publish
-  #     if publish.user_id == current_user.id
-  #       render json: { code: 422, error: "You cannot book your own published ride" }, status: :unprocessable_entity
-  #       return
-  #     end
-  
-  #     if publish.passengers_count > 0
-  #       seats = params[:passenger][:seats].to_i
-  
-  #       if publish.passengers_count >= seats
-  #         # Check if the user has previously booked the ride
-  #         passenger = Passenger.find_by(publish_id: publish.id, user_id: current_user.id)
-  
-  #         if passenger && passenger.status == "cancel booking"
-  #           # Update the existing passenger record
-  #           passenger.update(status: "confirm booking", seats: seats, price: publish.set_price * seats)
-  #           publish.update(passengers_count: publish.passengers_count - seats)
-  
-  #           render json: { code: 200, passenger: passenger }, status: :ok
-  #         else
-  #           @passenger = Passenger.new(book_params)
-  #           @passenger.price = publish.set_price * seats
-  #           @passenger.status = "confirm booking"
-  
-  #           if @passenger.save
-  #             publish.update(passengers_count: publish.passengers_count - seats)
-  #             render json: { code: 201, passenger: @passenger }, status: :created
-  #           else
-  #             error_message = @passenger.errors.full_messages.first
-  #             render json: { code: 422, error: error_message }, status: :unprocessable_entity
-  #           end
-  #         end
-  #       else
-  #         render json: { code: 422, error: "Insufficient seats available" }, status: :unprocessable_entity
-  #       end
-  #     else
-  #       render json: { code: 422, error: "No seats available for this ride" }, status: :unprocessable_entity
-  #     end
-  #   else
-  #     render json: { code: 422, error: "Invalid publish" }, status: :unprocessable_entity
-  #   end
-  # end
   
   def book_publish
+    # Check if the user's phone_verified is true
+    unless current_user.phone_verified
+      render json: { code: 403, message: "Phone not verified. Cannot book ride." }, status: :forbidden
+      return
+    end
     publish = Publish.find_by(id: params[:passenger][:publish_id])
     passenger = Passenger.find_by(publish_id: publish.id)
   

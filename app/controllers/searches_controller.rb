@@ -1,8 +1,6 @@
 class SearchesController < ApplicationController
   before_action :authenticate_user!
-
   def search
-
     source_rides = Publish.near([params[:source_latitude], params[:source_longitude]], 5, units: :km, latitude: :source_latitude, longitude: :source_longitude)
                           .where(date: params[:date])
                           .where('passengers_count > 0')
@@ -10,7 +8,6 @@ class SearchesController < ApplicationController
                           .where('user_id != ?', current_user.id)
                           .where('status = ?', "pending")
                           .includes(:user) # Include the associated User model to access user attributes
-
     destination_rides = Publish.near([params[:destination_latitude], params[:destination_longitude]], 5, units: :km, latitude: :destination_latitude, longitude: :destination_longitude)
                                 .where(date: params[:date])
                                 .where('passengers_count > 0')
@@ -18,7 +15,6 @@ class SearchesController < ApplicationController
                                 .where('user_id != ?', current_user.id)
                                 .where('status = ?', "pending")
                                 .includes(:user) # Include the associated User model to access user attributes
-
     add_city_rides = Publish.near([params[:destination_latitude], params[:destination_longitude]], 5, units: :km, latitude: :add_city_latitude, longitude: :add_city_longitude)
                              .where(date: params[:date])
                              .where('passengers_count > 0')
@@ -26,15 +22,12 @@ class SearchesController < ApplicationController
                              .where('user_id != ?', current_user.id)
                              .where('status = ?', "pending")
                              .includes(:user) # Include the associated User model to access user attributes
-
     @publishes = (source_rides & destination_rides | source_rides & add_city_rides | add_city_rides & destination_rides ).uniq
-
     if @publishes.length > 0
       apply_filters! # Apply filters if specified
       multiply_set_price(params[:passengers_count].to_i) # Multiply set_price by the number of passengers
       render json: {
         code: 200,
-        
         data: @publishes.map { |publish| serialize_publish(publish) }
       }
     else 

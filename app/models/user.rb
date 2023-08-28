@@ -2,8 +2,8 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
   require 'two_factor'
   has_many :vehicles
-  has_many :sender_chats, class_name: 'Chat', foreign_key: 'sender_id'
-  has_many :receiver_chats, class_name: 'Chat', foreign_key: 'receiver_id'
+  has_many :sender_chats, class_name: 'Chat', foreign_key: 'sender_id',  dependent: :destroy
+  has_many :receiver_chats, class_name: 'Chat', foreign_key: 'receiver_id',  dependent: :destroy
   #has_many :device_infos  
   has_many :publishes
   devise :database_authenticatable, :registerable,
@@ -50,21 +50,6 @@ class User < ApplicationRecord
         end
       end         
 
-      #notifications
-      def send_notification_to_user(title, description)
-        payload = {payload: { title: title , description: description } }
-        android_condition = "device_type = 'android' and user_id = #{id.to_i}"
-        ios_condition = "device_type = 'ios' and user_id = #{id.to_i}"
-        send_notification(payload, android_condition, 'android')
-        send_notification(payload, ios_condition, 'ios')
-      end
-    
-      def send_notification(payload, condition, device_type)
-        tokens = DeviceInfo.where(condition).pluck(:device_token).compact
-          DeviceInfo.send_notification(tokens, payload, device_type)
-      end
-
-      
       #validations 
       def trim_first_name
         first_name.strip! if first_name.present?
@@ -97,8 +82,7 @@ class User < ApplicationRecord
           false
         end
       end
-      
-      
+
       def verify_passcode(passcode)
         TwoFactor.verify_passcode(session_key, passcode)['Status'].to_s.downcase == 'success'
       end
@@ -125,9 +109,7 @@ class User < ApplicationRecord
         return false if digest.nil?
         BCrypt::Password.new(digest).is_password?(token)
       end
-    
-      # private
-    
+
       def create_activation_digest
         self.activation_token = SecureRandom.urlsafe_base64
         self.activate_token = self.activation_token

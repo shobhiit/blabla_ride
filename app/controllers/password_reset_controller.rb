@@ -19,7 +19,7 @@ class PasswordResetController < ApplicationController
         def verify_otp
           user = User.find_by(email: params[:email], otp: params[:otp])
           if user
-            user.update(activated: true)
+            user.update(activated: true, otp: nil)
             render json: { code: 200, message: "OTP verified successfully", email: user.email }, status: :ok
           else
             render json: { code: 422, error: "Invalid OTP or email" }, status: :unprocessable_entity
